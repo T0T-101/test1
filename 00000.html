@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnDemand Header & Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .header-category-container {
+            width: 100%;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            justify-content: flex-start;
+        }
+        .header, .nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* จัดให้อยู่ซ้ายสุด */
+            padding: 10px 70px;
+        }
+
+        .logo {
+    display: flex;
+    align-items: center; /* จัดให้โลโก้และข้อความอยู่ในแนวเดียวกัน */
+    gap: 10px; /* กำหนดระยะห่างระหว่างโลโก้กับข้อความ */
+    color: #007bff;}
+
+        .logo img {
+            height: 50px;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            background: #f1f1f1;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 10px;
+            position: sticky; /* ให้แถบค้นหาคงที่เมื่อเลื่อน */
+            top: 0;
+            z-index: 5; /* ให้แถบค้นหาติดกับด้านบน */
+        }
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .buttons-btn {
+    font-size: 16px;
+    color: red;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 5px 15px;
+    margin-left: 00px;
+    cursor: pointer;
+    outline: none;
+
+    /* ลบเงาและพื้นหลังเริ่มต้นของเบราว์เซอร์ */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-shadow: none;
+}
+
+        .category-container {
+            background-color: #f1f1f1;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            position: sticky;
+            top: 50px; /* Adjust so it doesn't overlap with the search bar */
+            z-index: 5; /* Ensure the category stays above the other content */
+            border-bottom: 1px solid #ddd; /* Add a subtle border at the bottom */
+        }
+
+        .category-container span {
+            margin: 0 20px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .category-container span:hover {
+            color: #007bff;
+        }
+
+        .carousel {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            margin: 2rem auto; /* Adjust margin for better spacing */
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-images img {
+            width: 100%;
+        }
+
+        /* Hide arrows by default */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+            border-radius: 0;
+            opacity: 0; /* Hide by default */
+            transition: opacity 0.3s;
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+        .next-btn {
+            right: 10px;
+        }
+
+        .carousel:hover .carousel-btn {
+            opacity: 1; /* Show arrows when hovering over the carousel */
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 1in; /* Space 1 inch from carousel */
+        }
+
+        .courses-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .course-card {
+            width: 250px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .course-card:hover {
+            transform: scale(1.05);
+        }
+        .course-card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .price {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 50%;
+        }
+        .feature-box {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .feature-box img {
+            width: 100px;
+            height: 100px;
+        }
+        .wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 1200px;
+            width: 90%;
+        }
+        .center-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh;
+        }
+        .search-bar img {
+            width: 20px; /* ปรับขนาดของแว่นขยาย */
+            height: 20px;
+            margin-right: 10px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f8f8;
+        }
+        .container1 {
+            max-width: 1000px; /* Adjusted to accommodate 5 items */
+            margin: auto;
+            text-align: center;
+        }
+        h2 {
+            font-size: 20px;
+        }
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 40px;
+        }
+        .course-list {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+            width: 3000px; /* Adjusted for 10 items and 5 visible cards */
+        }
+        .course-card {
+            background: white;
+            width: 180px; /* Adjusted width for better spacing */
+            margin: 0 10px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .course-card img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .price {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .arrow {
+            position: absolute;
+            top: 100px; /* Move the arrows above the carousel */
+            transform: translateY(0); /* Adjust to the top */
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10; /* Ensure the arrows are above the carousel */
+
+            
+        }
+        .prev {
+            left: 0%; /* Align to the left 10% of the carousel */
+        }
+        .next {
+            right: 0%; /* Align to the right 10% of the carousel */
+        }
+        a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit color from parent (for the card content) */
+        }
+        .arrow1 {
+            position: absolute;
+            top: 100px; /* Move the arrows above the carousel */
+            transform: translateY(0); /* Adjust to the top */
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10; /* Ensure the arrows are above the carousel */
+
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="header-category-container">
+        <div class="header">
+            <div class="logo">
+                <img src="c:\Users\Lenovo\Pictures\New folder\Untitled_Artwork.png" alt="center"> <!-- Update your logo path -->
+                <strong>center</strong>
+            </div>
+            <div class="search-bar">
+                <img src="https://png.pngtree.com/png-clipart/20230405/original/pngtree-magnifying-glass-line-icon-png-image_9028847.png" alt="magnifying glass"> 
+                <input type="text" placeholder="พิมพ์รหัส, ชื่อคอร์ส">
+            </div>
+            <div class="buttons-btn">เข้าสู่ระบบ<!-- Update login link -->
+            </div>
+        </div>
+
+        <!-- กรอบหมวดหมู่ -->
+        <div class="category-container">
+            <span>HOME</span>
+            <span>FRESHER</span>
+            <span>SOPHOMORE</span>
+            <span>JUNIOR</span>
+            <span>SENIOR</span>
+        </div>
+    </div>
+
+    <!-- Carousel -->
+    <div class="center-wrapper">
+    <div class="wrapper">
+    <div class="carousel">
+        <div class="carousel-images">
+            <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg" alt="นก 1">
+            <img src="https://static.thairath.co.th/media/4DQpjUtzLUwmJZZSDtCqym2RRUwaqXoSmeJyATDdSoIa.jpg" alt="นก 2">
+            <img src="https://f.ptcdn.info/002/048/000/oidav7m4nF0JGvXz44Y-o.jpg" alt="นก 3">
+        </div>
+        <button class="carousel-btn prev-btn">&#10094;</button> <!-- Left Arrow -->
+        <button class="carousel-btn next-btn">&#10095;</button> <!-- Right Arrow -->
+    </div>
+    <div class="features">
+        <div class="feature-box">
+            <img src="https://f.ptcdn.info/002/048/000/oidav7m4nF0JGvXz44Y-o.jpg" alt="ทดลองเรียนฟรี">
+            <p>ทดลองเรียนฟรี</p>
+        </div>
+        <div class="feature-box">
+            <img src="https://f.ptcdn.info/002/048/000/oidav7m4nF0JGvXz44Y-o.jpg" alt="คูปองส่วนลด">
+            <p>คูปองส่วนลด</p>
+        </div>
+        <div class="feature-box">
+            <img src="https://f.ptcdn.info/002/048/000/oidav7m4nF0JGvXz44Y-o.jpg" alt="อ่านบทความ">
+            <p>อ่านบทความ</p>
+        </div>
+        <div class="feature-box">
+            <img src="https://f.ptcdn.info/002/048/000/oidav7m4nF0JGvXz44Y-o.jpg" alt="วางแผนการเรียน">
+            <p>วางแผนการเรียน</p>
+        </div>
+    </div>
+    </div>
+    </div>
+    
+    
+
+    <h2>calculus</h2>
+
+    <div class="container1">
+        <div class="carousel-container">
+            <button class="arrow prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="arrow next" onclick="moveSlide(1)">&#10095;</button>
+            <div class="course-list" id="courseList">
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>คณิตศาสตร์</h3>
+                    <p>Pack 1</p>
+                    <p class="price">฿4,300.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>คณิตศาสตร์ TCAS</h3>
+                    <p>Pack TCAS</p>
+                    <p class="price">฿11,900.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>เคมี ม.ปลาย</h3>
+                    <p>Pack เคมี</p>
+                    <p class="price">฿4,500.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>ชีววิทยา</h3>
+                    <p>Pack ชีวะ</p>
+                    <p class="price">฿4,300.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="phy.jpg">
+                    <h3>ฟิสิกส์</h3>
+                    <p>Pack ฟิสิกส์</p>
+                    <p class="price">฿4,600.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="eng.jpg">
+                    <h3>อังกฤษ</h3>
+                    <p>Pack อังกฤษ</p>
+                    <p class="price">฿3,900.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="thai.jpg">
+                    <h3>ภาษาไทย</h3>
+                    <p>Pack ไทย</p>
+                    <p class="price">฿3,500.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="social.jpg">
+                    <h3>สังคม</h3>
+                    <p>Pack สังคม</p>
+                    <p class="price">฿3,700.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="coding.jpg">
+                    <h3>โค้ดดิ้ง</h3>
+                    <p>Pack Coding</p>
+                    <p class="price">฿5,000.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="art.jpg">
+                    <h3>ศิลปะ</h3>
+                    <p>Pack ศิลปะ</p>
+                    <p class="price">฿3,800.00</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <h2>calculus</h2>
+
+    <div class="container1">
+        <div class="carousel-container">
+            <button class="arrow1 prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="arrow1 next" onclick="moveSlide(1)">&#10095;</button>
+            <div class="course-list" id="courseList">
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>คณิตศาสตร์</h3>
+                    <p>Pack 1</p>
+                    <p class="price">฿4,300.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>คณิตศาสตร์ TCAS</h3>
+                    <p>Pack TCAS</p>
+                    <p class="price">฿11,900.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>เคมี ม.ปลาย</h3>
+                    <p>Pack เคมี</p>
+                    <p class="price">฿4,500.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="https://www.xinhuathai.com/wp-content/uploads/2024/02/7507fc8a87b444b69dfa21c7b448c481.jpg">
+                    <h3>ชีววิทยา</h3>
+                    <p>Pack ชีวะ</p>
+                    <p class="price">฿4,300.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="phy.jpg">
+                    <h3>ฟิสิกส์</h3>
+                    <p>Pack ฟิสิกส์</p>
+                    <p class="price">฿4,600.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="eng.jpg">
+                    <h3>อังกฤษ</h3>
+                    <p>Pack อังกฤษ</p>
+                    <p class="price">฿3,900.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="thai.jpg">
+                    <h3>ภาษาไทย</h3>
+                    <p>Pack ไทย</p>
+                    <p class="price">฿3,500.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="social.jpg">
+                    <h3>สังคม</h3>
+                    <p>Pack สังคม</p>
+                    <p class="price">฿3,700.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="coding.jpg">
+                    <h3>โค้ดดิ้ง</h3>
+                    <p>Pack Coding</p>
+                    <p class="price">฿5,000.00</p>
+                </a>
+                <a href="https://www.google.com" target="_blank" class="course-card">
+                    <img src="art.jpg">
+                    <h3>ศิลปะ</h3>
+                    <p>Pack ศิลปะ</p>
+                    <p class="price">฿3,800.00</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        const images = document.querySelectorAll('.carousel-images img');
+        const totalImages = images.length;
+
+        // Move to the next image
+        function nextImage() {
+            if (currentIndex < totalImages - 1) {
+                currentIndex++;
+            } else {
+                currentIndex = 0; // Loop back to the first image
+            }
+            updateCarousel();
+        }
+
+        // Move to the previous image
+        function prevImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                currentIndex = totalImages - 1; // Loop back to the last image
+            }
+            updateCarousel();
+        }
+
+        // Update the carousel position
+        function updateCarousel() {
+            const offset = -currentIndex * 100;
+            document.querySelector('.carousel-images').style.transform = `translateX(${offset}%)`;
+        }
+
+        // Add event listeners to buttons
+        document.querySelector('.next-btn').addEventListener('click', nextImage);
+        document.querySelector('.prev-btn').addEventListener('click', prevImage);
+
+        // Automatically move to the next image every 3 seconds
+        setInterval(nextImage, 3000); // 3000 ms = 3 seconds
+
+            const visibleCards = 5;  // Changed from 4 to 5
+        const totalCards = 10;
+        const cardWidth = 180;  // Adjusted width to fit 5 cards comfortably
+        const courseList = document.getElementById("courseList");
+
+        function moveSlide(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) {
+                currentIndex = totalCards - visibleCards;
+            } else if (currentIndex >= totalCards) {
+                currentIndex = 0;
+            }
+            courseList.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
+    </script>
+</body>
+</html>
